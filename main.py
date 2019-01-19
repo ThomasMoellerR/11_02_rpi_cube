@@ -428,7 +428,7 @@ def kreis():
     while True:
         pass
 
-def thread1():
+def thread2():
 
     while True:
         if mode == "regen":
@@ -449,7 +449,7 @@ def thread1():
 
 
 
-def thread2():
+def thread1():
     global client
 
     while True:
