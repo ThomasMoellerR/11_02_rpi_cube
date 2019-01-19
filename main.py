@@ -527,6 +527,7 @@ t1= threading.Thread(target=thread1)
 t2= threading.Thread(target=thread2)
 
 t1.start()
+time.sleep(1)
 t2.start()
 
 
