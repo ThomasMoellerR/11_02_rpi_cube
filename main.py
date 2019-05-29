@@ -19,6 +19,7 @@ import os
 
 from animations.regen import regen
 from animations.cube_random import cube_random
+from animations.snake import snake
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(23, GPIO.OUT)
@@ -28,7 +29,7 @@ GPIO.output(23, GPIO.HIGH)
 
 
 brightness = 1.0
-mode = "random3"
+mode = "snake"
 mode_changed = False
 
 actual_object_pointer = 0
@@ -44,14 +45,14 @@ def thread3():
     while True:
         time.sleep(0.1)
 
-        
 
 
 
 
-                
 
-     
+
+
+
 
 
 
@@ -62,7 +63,7 @@ def thread2():
         if mode == "regen":
             obj = regen()
             obj.show()
-        
+
         if mode == "random1":
             obj = cube_random()
             obj.random1()
@@ -74,11 +75,15 @@ def thread2():
         if mode == "random3":
             obj = cube_random()
             obj.random3()
-                
 
-     
 
- 
+        if mode == "snake":
+         obj = snake(12)
+         obj.show()
+
+
+
+
 
 
 def thread1():
