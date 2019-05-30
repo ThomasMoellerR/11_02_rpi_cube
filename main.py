@@ -29,7 +29,7 @@ GPIO.output(23, GPIO.HIGH)
 
 
 brightness = 1.0
-mode = "snake"
+mode = "random3"
 mode_changed = False
 
 actual_object_pointer = 0
