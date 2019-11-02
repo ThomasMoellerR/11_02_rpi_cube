@@ -9,9 +9,16 @@ class snake:
     def __init__(self, dim):
         self.dim = dim # dimension
         self.m = np.zeros((dim,dim,dim,1), dtype=np.uint8) # belegte felder
+        self.ex = False
 
     def __del__(self):
         pass
+
+    def __str__(self):
+        return "cube_random"
+
+    def exit(self):
+        self.ex = True
 
     def gueltiges_feld(self, x ,y, z):
         if x < self.dim and y < self.dim and z < self.dim:
@@ -42,10 +49,12 @@ class snake:
 
 
         while True:
+            if self.ex: return "exit"
 
             #print(count, x,y,z, state)
 
             while True:
+                if self.ex: return "exit"
 
                 if state == "rechts":
                     if (self.gueltiges_feld(x,y,z)):
@@ -54,6 +63,7 @@ class snake:
 
                         spicube.schreiben(a)
                         time.sleep(delay)
+                        if self.ex: return "exit"
 
                         x += 1
                         break
@@ -71,6 +81,7 @@ class snake:
 
                         spicube.schreiben(a)
                         time.sleep(delay)
+                        if self.ex: return "exit"
 
                         y += 1
                         break
@@ -88,6 +99,7 @@ class snake:
 
                         spicube.schreiben(a)
                         time.sleep(delay)
+                        if self.ex: return "exit"
 
                         x -= 1
                         break
@@ -106,6 +118,7 @@ class snake:
 
                         spicube.schreiben(a)
                         time.sleep(delay)
+                        if self.ex: return "exit"
 
                         y -= 1
                         break

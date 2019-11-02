@@ -9,12 +9,17 @@ import colorsys
 
 class cube_random:
     def __init__(self):
-        print("object random1 constructor")
+        print("cube_random constructor")
+        self.ex = False
 
     def __del__(self):
-        print("object random1 destructor")
+        print("cube_random destructor")
 
+    def __str__(self):
+        return "cube_random"
 
+    def exit(self):
+        self.ex = True
 
     def random1(self):
         a = utilcube.alle(0,0,0)
@@ -26,12 +31,13 @@ class cube_random:
             a[coordinates[0]][coordinates[1]][coordinates[2]][2] = color[2]
             spicube.schreiben(a)
             time.sleep(0.1)
+            if self.ex: return "exit"
+
 
     def random2(self):
         farben = np.arange(0,360,60)
         a = utilcube.alle (0, 0, 0)
         while True:
-            suchbereich = range(12)
             for x, y, z in itertools.product(range(12), range(12), range(12)):
                 grad = random.choice(farben)
                 color = colorsys.hsv_to_rgb(grad/360, 1.0, 1.0)
@@ -44,6 +50,7 @@ class cube_random:
 
             spicube.schreiben(a)
             time.sleep(0.0)
+            if self.ex: return "exit"
 
  
     def random3(self):
@@ -89,4 +96,5 @@ class cube_random:
 
                 spicube.schreiben(a)
                 time.sleep(1)
+                if self.ex: return "exit"
     

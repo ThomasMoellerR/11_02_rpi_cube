@@ -14,12 +14,15 @@ import math
 import itertools
 import argparse
 import os
-
+from mqtt import c_mqtt
 
 
 from animations.regen import regen
 from animations.cube_random import cube_random
 from animations.snake import snake
+from animations.blocks import blocks
+
+
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(23, GPIO.OUT)
@@ -29,34 +32,14 @@ GPIO.output(23, GPIO.HIGH)
 
 
 brightness = 1.0
-mode = "random3"
-mode_changed = False
-
-actual_object_pointer = 0
+mode = "regen"
+obj = "objekt"
 
 
 
 
-
-
-
-def thread3():
-
-    while True:
-        time.sleep(0.1)
-
-
-
-
-
-
-
-
-
-
-
-
-def thread2():
+def Thread_Cube():
+    global obj
     global actual_object_pointer
 
     while True:
@@ -76,79 +59,61 @@ def thread2():
             obj = cube_random()
             obj.random3()
 
+        if mode == "full_color_change":
+            obj = blocks()
+            obj.full_color_change()
 
-        if mode == "snake":
+
+        if mode == "snakexxxxxxxxxxxxxxxxxxxxxxxxxxx":
          obj = snake(12)
          obj.show()
 
 
 
 
+###############################################################################
+#  Function Name  :  Thread_MqttLoop
+#  Description    :  Mqtt Loop
+#  Parameter(s)   :  None
+#  Return Value   :  None
+###############################################################################
 
-
-def thread1():
-    global client
-
+def Thread_MqttLoop():
     while True:
+        o.loop()
+ 
 
-        client.on_connect = on_connect
-        client.on_message = on_message
+###############################################################################
+#  Function Name  :  Thread_MqttRecQueue
+#  Description    :  Receives Mqtt messages
+#  Parameter(s)   :  None
+#  Return Value   :  None
+###############################################################################
 
-        try_to_connect = True
-
-        while try_to_connect:
-            try:
-                client.connect(args.mqtt_server_ip, int(args.mqtt_server_port), 60)
-                try_to_connect = False
-                break
-            except Exception as e:
-                print(e)
-
-
-
-        # Blocking call that processes network traffic, dispatches callbacks and
-        # handles reconnecting.
-        # Other loop*() functions are available that give a threaded interface and a
-        # manual interface.
-        client.loop_forever()
-
-
-
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
-    client.subscribe(args.mqtt_topic_set_brightness)
-    client.subscribe(args.mqtt_topic_set_mode)
-
-
-
-# The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
+def Thread_MqttRecQueue():
     global brightness
     global mode
     global mode_changed
 
-    print(msg.topic + " "+ msg.payload.decode("utf-8"))
+    while True:
+        if not o.empty():
+            topic, message = o.get()
+            print(topic, message)
 
-    if msg.topic == args.mqtt_topic_set_brightness:
-        brightness = float(msg.payload.decode("utf-8"))
+            if topic == args.mqtt_topic_set_brightness:
+                brightness = float(message)
+                
+
+            if topic == args.mqtt_topic_set_mode:
+                mode = message
+                obj.exit()
 
 
-    if msg.topic == args.mqtt_topic_set_mode:
-        mode = msg.payload.decode("utf-8")
-        mode_changed = True
 
 
-
-################################################################################
-#
-# Hauptprogramm
-#
-################################################################################
-
+###############################################################################
+#  Program Start Point
+###############################################################################
 
 # Argparse
 parser = argparse.ArgumentParser()
@@ -158,13 +123,19 @@ parser.add_argument("--mqtt_topic_set_brightness", help="")
 parser.add_argument("--mqtt_topic_set_mode", help="")
 args = parser.parse_args()
 
-client = mqtt.Client()
+#  Init
+sublist = []
+sublist.append(args.mqtt_topic_set_brightness)
+sublist.append(args.mqtt_topic_set_mode)
+o = c_mqtt("192.168.178.52","1883",sublist)
 
-t1= threading.Thread(target=thread1)
-t2= threading.Thread(target=thread2)
-t3= threading.Thread(target=thread3)
+#  Threads
+t1= threading.Thread(target=Thread_MqttLoop)
+t2= threading.Thread(target=Thread_MqttRecQueue)
+t3= threading.Thread(target=Thread_Cube)
 
 t1.start()
-time.sleep(1)
+time.sleep(3)
 t2.start()
+time.sleep(1)
 t3.start()

@@ -7,10 +7,17 @@ import itertools
 
 class regen:
     def __init__(self):
-        print("object regen constructor")
+        print("regen constructor")
+        self.ex = False
 
     def __del__(self):
-        print("object regen destructor")
+        print("regen destructor")
+
+    def __str__(self):
+        return "regen"
+
+    def exit(self):
+        self.ex = True
 
 
 
@@ -48,6 +55,8 @@ class regen:
 
                 spicube.schreiben(a)
                 time.sleep(0.05) # 0.01
+
+                if self.ex: return "exit"
 
 
 

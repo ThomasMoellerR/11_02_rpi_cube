@@ -14,6 +14,15 @@ def alle(r,g,b):
 def get_grad_array():
     return np.arange(0,360,60)
 
+def grad_to_rgb(grad):
+    color = colorsys.hsv_to_rgb(grad/360, 1.0, 1.0)
+    color = np.asarray(color)
+    color *= 255
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    return r,g,b
+    
 def random_coordinates():
     x = random.randint(0, 11)
     y = random.randint(0, 11)
